@@ -1,0 +1,82 @@
+EJERCICIO 13
+
+PARTE 1 - hashCode de Object, Integer y String
+
+Object:
+El metodo es native, lo implementa la JVM. Genera un numero para cada objeto la primera vez que se pide y lo guarda en el objeto, asi siempre devuelve el mismo. No depende de los atributos del objeto: dos objetos distintos dan (casi siempre) hashCode distinto aunque tengan los mismos datos.
+
+Integer:
+Devuelve el mismo valor del entero. Por ejemplo, Integer 42 tiene hashCode 42.
+
+String:
+Calcula el hash con todos sus caracteres:
+    s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
+Por ejemplo "Hola" = 72*31^3 + 111*31^2 + 108*31 + 97 = 2255068.
+Como un String no se puede modificar, el resultado se guarda y solo se calcula una vez.
+
+Por que son distintas:
+El hashCode tiene que ser coherente con equals (si dos objetos son iguales, tienen que tener el mismo hashCode).
+- En Object, equals compara si es el mismo objeto (==), entonces alcanza con un numero distinto por objeto.
+- Integer y String redefinen equals para comparar por valor ("Hola" es igual a new String("Hola")). Por eso su hashCode tiene que calcularse a partir del valor: un Integer usa directamente su numero y un String combina sus caracteres.
+
+
+PARTE 2 - Estructura interna de HashMap
+
+Un HashMap tiene un arreglo de "buckets" (table). Cada bucket es una lista enlazada de nodos, y cada nodo guarda:
+    hash, key, value, next
+
+    table --> [0] [1] [2] ... [15]
+                    |
+                    v
+                  Node(hash, key, value, next) --> Node --> null
+
+- La capacidad inicial es 16 (siempre potencia de 2).
+- El factor de carga es 0.75: cuando hay mas de 16 * 0.75 = 12 elementos, la tabla se duplica y se reubican los nodos.
+- Si dos claves caen en el mismo bucket (colision), se agregan a la lista de ese bucket. Si una lista llega a 8 nodos y la tabla tiene al menos 64 posiciones, Java la convierte en un arbol para buscar mas rapido.
+
+Para saber en que bucket va una clave:
+1. h = key.hashCode()
+2. hash = h ^ (h >>> 16)   (mezcla los bits altos con los bajos)
+3. bucket = (16 - 1) & hash   (se queda con los ultimos 4 bits, es como hacer hash % 16)
+
+Resultado al insertar las strings (se imprime ejecutando Main.java):
+    Hola        -> bucket 14
+    HolaMundo   -> bucket 9
+    HashMap     -> bucket 5
+    Colecciones -> bucket 13
+
+    [0]  null
+    [1]  null
+    [2]  null
+    [3]  null
+    [4]  null
+    [5]  -> Node("HashMap") -> null
+    [6]  null
+    [7]  null
+    [8]  null
+    [9]  -> Node("HolaMundo") -> null
+    [10] null
+    [11] null
+    [12] null
+    [13] -> Node("Colecciones") -> null
+    [14] -> Node("Hola") -> null
+    [15] null
+
+No hay colisiones: cada string queda sola en su bucket.
+
+
+PARTE 3 - equals y hashCode de Alumno
+
+La implementacion esta en Alumno.java. Dos alumnos son iguales si tienen el mismo id, nombreCompleto y correo, y hashCode se calcula con esos mismos campos.
+
+Caracteristicas que tienen que cumplir para mantener el contrato de hashCode:
+1. Si a.equals(b) es true, entonces a.hashCode() y b.hashCode() tienen que ser iguales. Por eso hashCode usa los mismos campos que equals.
+2. Si se llama varias veces a hashCode sobre el mismo objeto sin cambiarlo, tiene que devolver siempre el mismo valor.
+3. Si dos objetos no son iguales, pueden tener el mismo hashCode, pero conviene que sea distinto para que haya menos colisiones.
+
+Ademas equals tiene que ser:
+- Reflexivo: a.equals(a) es true.
+- Simetrico: si a.equals(b) entonces b.equals(a).
+- Transitivo: si a.equals(b) y b.equals(c) entonces a.equals(c).
+- Consistente: da siempre lo mismo si los objetos no cambian.
+- a.equals(null) es false.
