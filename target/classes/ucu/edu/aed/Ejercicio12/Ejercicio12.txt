@@ -1,0 +1,76 @@
+EJERCICIO 12 - Trie con HashMap
+
+Dónde está cada cosa:
+- tda/trie/impl/TNodoTrieHashMap.java: el nodo, guarda los hijos en un HashMap<Character, TNodoTrieHashMap>.
+- tda/trie/impl/TTrieHashMap.java: el trie, cada método le pasa el trabajo a la raíz.
+- Ejercicio12/ArbolSufijos.java: árbol de sufijos armado con TTrieHashMap, para buscar patrones.
+- Ejercicio12/Autocompletar.java: aplicación de autocompletar (main).
+- Ejercicio12/BuscarPatrones.java: aplicación de búsqueda de patrones en un texto (main).
+- resources/ut03/texto-patrones.txt: el texto que usa BuscarPatrones.
+- test/.../TTrieHashMapTest.java y test/.../ArbolSufijosTest.java: pruebas.
+
+
+VECTOR VS HASHMAP
+
+En el trie con vector cada nodo tiene 26 lugares (uno por letra) y al hijo de la letra c se llega con hijos[c - 'a'].
+Con el HashMap cada nodo guarda solo los hijos que existen, y la clave es directamente el carácter: hijos.get(c).
+
+Ventajas del HashMap:
+- Sirve para cualquier alfabeto: ñ, tildes, mayúsculas, números, espacios. Con el vector solo entra a..z.
+- No se desperdicia memoria en nodos con pocos hijos (la mayoría de los nodos de un trie tienen 0 o 1 hijo).
+
+Desventajas:
+- Cada HashMap tiene su propio costo de memoria y el get tiene que calcular el hash, así que es algo más lento que acceder a un vector por índice.
+- El HashMap no guarda orden, entonces predecir no devuelve las palabras en orden alfabético. Si se necesita, se ordenan después o se usa un TreeMap en vez de HashMap.
+
+Los métodos (insertar, buscar, predecir) son los mismos que en el ejercicio 5, solo cambia cómo se obtiene y se agrega un hijo:
+- obtener hijo:  hijos.get(letra)        (antes hijos[letra - 'a'])
+- agregar hijo:  hijos.put(letra, nodo)  (antes hijos[letra - 'a'] = nodo)
+- recorrer hijos: se recorre hijos.entrySet(), y la letra sale de la clave.
+
+Los órdenes quedan iguales: buscar e insertar O(n) con n el largo de la palabra, y predecir O(n + m) con m la cantidad de nodos que cuelgan del prefijo (get y put del HashMap son O(1) promedio).
+
+
+BÚSQUEDA DE PATRONES (ÁRBOL DE SUFIJOS)
+
+Un sufijo es el texto desde una posición hasta el final. Por ejemplo los sufijos de "banana" son: banana (0), anana (1), nana (2), ana (3), na (4), a (5).
+
+La idea es que si un patrón aparece en la posición i del texto, el sufijo que empieza en i empieza con el patrón. Entonces:
+- Para construir: se insertan en el trie todos los sufijos del texto, y como dato de cada uno se guarda la posición donde empieza.
+- Para buscar: se hace predecir(patron). Todos los sufijos que empiezan con el patrón son justo las posiciones donde aparece.
+
+Ejemplo: en "banana", predecir("ana") devuelve los sufijos "ana" (3) y "anana" (1), así que "ana" aparece en las posiciones 1 y 3.
+
+No hizo falta agregar nada al trie, se reutiliza predecir. ArbolSufijos usa un TTrieHashMap<Integer> por dentro porque el dato siempre es una posición.
+
+Órdenes (n = largo del texto, m = largo del patrón):
+- Construir: O(n²), porque hay n sufijos de hasta n letras. Esto también es lo que ocupa en memoria, por eso sirve para textos no muy largos.
+- Buscar: O(m + cantidad de nodos debajo del patrón). No depende del largo del texto.
+Conviene cuando el texto no cambia y se hacen muchas búsquedas.
+
+
+CÓMO EJECUTAR
+
+Autocompletar: correr el main de Ejercicio12/Autocompletar. Carga las palabras de listado-general-desordenado.txt y pide que escribas el comienzo de una palabra. Muestra cuántas palabras empiezan con eso y las primeras 10 en orden alfabético. Con enter vacío termina.
+
+BuscarPatrones: correr el main de Ejercicio12/BuscarPatrones. Carga texto-patrones.txt, arma el árbol de sufijos y pide un patrón. Muestra las posiciones donde aparece y un pedazo del texto alrededor. Con enter vacío termina. Busca sin importar mayúsculas.
+
+
+PRUEBAS
+
+TTrieHashMapTest (11 pruebas): trie vacío, insertar y buscar, insertar repetida, prefijo que no es palabra, palabra que no está, palabra que es prefijo de otra, predecir, predecir con prefijo inexistente, predecir con prefijo vacío, recorrer, y caracteres fuera de a..z (ñandú, año, C3PO).
+
+ArbolSufijosTest (6 pruebas) sobre "banana" y otros textos: patrón que aparece varias veces, patrón igual al texto, patrón que no aparece, patrón vacío, patrones solapados ("aa" en "aaaa" da 0, 1, 2) y texto con espacios.
+
+Algunas salidas de las aplicaciones:
+
+Autocompletar (79355 palabras cargadas):
+- "cas": 259 palabras (cas, casa, casabe, casaca, casacion, ...)
+- "programac": programacion
+- "xyz": no hay palabras
+
+BuscarPatrones:
+- "la": 7 veces, posiciones [9, 22, 33, 53, 64, 79, 130] (incluye "las" y "palabras")
+- "árbol de sufijos": 2 veces, posiciones [159, 236]
+- "ana": 4 veces, posiciones [0, 13, 15, 68] ("ana", dos veces dentro de "banana" y en "canasta")
+- "perro": no aparece

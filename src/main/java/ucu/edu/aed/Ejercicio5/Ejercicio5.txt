@@ -1,0 +1,139 @@
+------------------------------------------------------------
+1. BUSCAR PALABRA COMPLETA
+------------------------------------------------------------
+
+Pseudocódigo:
+
+TTrie.buscar(palabra) devuelve Entry
+Comienzo
+    devolver raiz.buscar(palabra)
+Fin
+
+TNodoTrie.buscar(palabra) devuelve Entry
+Comienzo
+    nodo <- buscarNodo(palabra)
+    SI nodo = nulo ENTONCES
+        devolver nulo
+    FIN SI
+    devolver nuevo Entry(nodo.dato, nodo.esPalabra, palabra)
+Fin
+
+TNodoTrie.buscarNodo(palabra) devuelve TNodoTrie
+Comienzo
+    SI palabra es vacía ENTONCES
+        devolver this
+    FIN SI
+    letra <- primer carácter de palabra
+    hijo <- hijos.obtener(letra)
+    SI hijo = nulo ENTONCES
+        devolver nulo
+    FIN SI
+    devolver hijo.buscarNodo(palabra sin su primer carácter)
+Fin
+
+
+------------------------------------------------------------
+2. OBTENER LA LISTA DE PALABRAS POR UN PREFIJO (PREDECIR)
+------------------------------------------------------------
+
+Pseudocódigo:
+
+TTrie.predecir(prefijo) devuelve Lista de Entry
+Comienzo
+    devolver raiz.predecir(prefijo)
+Fin
+
+TNodoTrie.predecir(prefijo) devuelve Lista de Entry
+Comienzo
+    resultado <- nueva Lista vacía
+    nodo <- buscarNodo(prefijo)
+    SI nodo <> nulo ENTONCES
+        nodo.recolectar(prefijo, resultado)
+    FIN SI
+    devolver resultado
+Fin
+
+TNodoTrie.recolectar(palabraArmada, resultado)
+Comienzo
+    SI esPalabra ENTONCES
+        resultado.agregar(nuevo Entry(dato, VERDADERO, palabraArmada))
+    FIN SI
+    letras <- hijos.claves()
+    i <- 0
+    MIENTRAS i < letras.tamaño() HACER
+        letra <- letras[i]
+        hijo <- hijos.obtener(letra)
+        hijo.recolectar(palabraArmada + letra, resultado)
+        i <- i + 1
+    FIN MIENTRAS
+Fin
+
+
+------------------------------------------------------------
+3. INSERTAR UNA PALABRA CON UN DATO ASOCIADO
+------------------------------------------------------------
+
+Pseudocódigo:
+
+TTrie.insertar(palabra, dato) devuelve booleano
+Comienzo
+    devolver raiz.insertar(palabra, dato)
+Fin
+
+TNodoTrie.insertar(palabra, unDato) devuelve booleano
+Comienzo
+    SI palabra es vacía ENTONCES
+        SI esPalabra ENTONCES
+            devolver FALSO
+        FIN SI
+        esPalabra <- VERDADERO
+        dato <- unDato
+        devolver VERDADERO
+    FIN SI
+    letra <- primer carácter de palabra
+    hijo <- hijos.obtener(letra)
+    SI hijo = nulo ENTONCES
+        hijo <- nuevo TNodoTrie()
+        hijos.agregar(letra, hijo)
+    FIN SI
+    devolver hijo.insertar(palabra sin su primer carácter, unDato)
+Fin
+
+
+------------------------------------------------------------
+4. ELIMINAR UNA PALABRA DEL TRIE
+------------------------------------------------------------
+
+Pseudocódigo:
+
+TTrie.eliminar(palabra) devuelve booleano
+Comienzo
+    devolver raiz.eliminar(palabra)
+Fin
+
+TNodoTrie.eliminar(palabra) devuelve booleano
+Comienzo
+    SI palabra es vacía ENTONCES
+        SI NOT esPalabra ENTONCES
+            devolver FALSO
+        FIN SI
+        esPalabra <- FALSO
+        dato <- nulo
+        devolver VERDADERO
+    FIN SI
+    letra <- primer carácter de palabra
+    hijo <- hijos.obtener(letra)
+    SI hijo = nulo ENTONCES
+        devolver FALSO
+    FIN SI
+    eliminada <- hijo.eliminar(palabra sin su primer carácter)
+    SI eliminada AND hijo.esInutil() ENTONCES
+        hijos.quitar(letra)
+    FIN SI
+    devolver eliminada
+Fin
+
+TNodoTrie.esInutil() devuelve booleano
+Comienzo
+    devolver (NOT esPalabra) AND hijos.esVacio()
+Fin

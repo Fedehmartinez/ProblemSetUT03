@@ -1,0 +1,3 @@
+Ana dejó la banana en la mesa de la cocina y después la puso en la canasta con las otras frutas.
+Un trie es un árbol que guarda palabras letra por letra, y un árbol de sufijos es un trie que guarda todos los sufijos de un texto.
+Con el árbol de sufijos podemos buscar un patrón en el texto y saber en qué posiciones aparece, sin recorrer el texto entero cada vez.
