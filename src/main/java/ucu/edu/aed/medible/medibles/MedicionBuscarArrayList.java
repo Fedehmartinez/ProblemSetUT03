@@ -5,6 +5,9 @@ import ucu.edu.aed.medible.lib.Medible;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Mide cuánto tarda el ArrayList en buscar una lista de palabras (contains recorre toda la lista).
+ */
 public class MedicionBuscarArrayList extends Medible<List<String>> {
 
     private final ArrayList<String> list;

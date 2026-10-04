@@ -19,6 +19,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * Carga el listado de palabras en cada estructura y mide cuánto tardan en buscar y en predecir.
+ */
 public class Ejercicio7 {
 
     public static void main(String[] args) throws IOException {
@@ -29,6 +32,7 @@ public class Ejercicio7 {
         String archivoBuscar =
                 "src/main/resources/ut03/listado-general-palabrasBuscar.txt";
 
+        // parte 2: las mismas palabras en las 5 estructuras
         LinkedList<String> linkedList = cargarLinkedList(archivoPalabras);
         ArrayList<String> arrayList = cargarArrayList(archivoPalabras);
         HashMap<String, String> hashMap = cargarHashMap(archivoPalabras);
@@ -61,17 +65,20 @@ public class Ejercicio7 {
         MedicionPredecirTTrieHashMap medicionPredecirTrie =
                 new MedicionPredecirTTrieHashMap(trie);
 
+        // parte 3: se buscan las 500 palabras, 20 veces
         medicionLinkedList.medir(20, palabrasBuscar).print();
         medicionArrayList.medir(20, palabrasBuscar).print();
         medicionHashMap.medir(20, palabrasBuscar).print();
         medicionTreeMap.medir(20, palabrasBuscar).print();
         medicionTrie.medir(20, palabrasBuscar).print();
 
+        // parte 5: todas las palabras que empiezan con "cas", 20 veces
         medicionPredecirLinkedList.medir(20, "cas").print();
         medicionPredecirHashMap.medir(20, "cas").print();
         medicionPredecirTrie.medir(20, "cas").print();
     }
 
+    // los métodos cargar leen el archivo línea por línea (una palabra por línea)
     public static LinkedList<String> cargarLinkedList(String archivo)
             throws IOException {
 
@@ -118,7 +125,7 @@ public class Ejercicio7 {
         String palabra;
 
         while ((palabra = lector.readLine()) != null) {
-            mapa.put(palabra, palabra);
+            mapa.put(palabra, palabra); // la palabra es la clave y también el dato
         }
 
         lector.close();

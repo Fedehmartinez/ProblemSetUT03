@@ -5,6 +5,9 @@ import ucu.edu.aed.medible.lib.Medible;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * Mide cuánto tarda el TreeMap en buscar una lista de palabras.
+ */
 public class MedicionBuscarTreeMap extends Medible<List<String>> {
 
     private final TreeMap<String, String> map;

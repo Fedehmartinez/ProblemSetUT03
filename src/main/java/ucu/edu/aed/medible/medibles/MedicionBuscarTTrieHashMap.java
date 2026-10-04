@@ -5,6 +5,9 @@ import ucu.edu.aed.tda.trie.impl.TTrieHashMap;
 
 import java.util.List;
 
+/**
+ * Mide cuánto tarda el trie en buscar una lista de palabras.
+ */
 public class MedicionBuscarTTrieHashMap extends Medible<List<String>> {
 
     private final TTrieHashMap<String> trie;

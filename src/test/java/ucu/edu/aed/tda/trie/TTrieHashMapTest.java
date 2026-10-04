@@ -79,7 +79,7 @@ public class TTrieHashMapTest extends TestCase {
         assertEquals(List.of("ma", "mal", "sal", "so", "sol"), recorridas);
     }
 
-    // con el HashMap sirve cualquier caracter, no solo a..z
+    // con el HashMap sirve cualquier carácter, no solo a..z
     public void testOtrosCaracteres() {
         assertTrue(trie.insertar("ñandú", 10));
         assertTrue(trie.insertar("año", 11));

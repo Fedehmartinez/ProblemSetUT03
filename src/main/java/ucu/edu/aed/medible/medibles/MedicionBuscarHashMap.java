@@ -5,6 +5,9 @@ import ucu.edu.aed.medible.lib.Medible;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Mide cuánto tarda el HashMap en buscar una lista de palabras.
+ */
 public class MedicionBuscarHashMap extends Medible<List<String>> {
 
     private final HashMap<String, String> map;

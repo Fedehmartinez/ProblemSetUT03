@@ -31,7 +31,7 @@ public class Autocompletar {
         String prefijo = leerPrefijo(scanner);
         while (!prefijo.isEmpty()) {
             List<Entry<String>> sugerencias = trie.predecir(prefijo);
-            sugerencias.sort(Comparator.comparing(Entry::getPalabra)); // orden alfabetico
+            sugerencias.sort(Comparator.comparing(Entry::getPalabra)); // orden alfabético
 
             if (sugerencias.isEmpty()) {
                 System.out.println("No hay palabras que empiecen con \"" + prefijo + "\"");
@@ -50,7 +50,7 @@ public class Autocompletar {
         }
     }
 
-    // devuelve "" si el usuario no escribe nada (asi se sale)
+    // devuelve "" si el usuario no escribe nada (así se sale)
     private static String leerPrefijo(Scanner scanner) {
         System.out.print("\nEscribi el comienzo de una palabra (enter para salir): ");
         if (!scanner.hasNextLine()) {

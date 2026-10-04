@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Arma el arbol de sufijos de un texto y muestra en que posiciones aparece cada patron.
+ * Arma el árbol de sufijos de un texto y muestra en qué posiciones aparece cada patrón.
  */
 public class BuscarPatrones {
 
@@ -15,7 +15,7 @@ public class BuscarPatrones {
     public static void main(String[] args) {
         StringBuilder sb = new StringBuilder();
         FileUtils.leerLineas(ARCHIVO, linea -> sb.append(linea).append(' '));
-        String texto = sb.toString().trim().toLowerCase(); // asi no importan las mayusculas
+        String texto = sb.toString().trim().toLowerCase(); // así no importan las mayúsculas
 
         ArbolSufijos arbol = new ArbolSufijos(texto);
         System.out.println("Texto cargado (" + texto.length() + " caracteres):");
@@ -37,7 +37,7 @@ public class BuscarPatrones {
         }
     }
 
-    // devuelve "" si el usuario no escribe nada (asi se sale)
+    // devuelve "" si el usuario no escribe nada (así se sale)
     private static String leerPatron(Scanner scanner) {
         System.out.print("\nPatron a buscar (enter para salir): ");
         if (!scanner.hasNextLine()) {
@@ -46,7 +46,7 @@ public class BuscarPatrones {
         return scanner.nextLine().toLowerCase();
     }
 
-    // el patron entre corchetes con un poco de texto alrededor
+    // el patrón entre corchetes con un poco de texto alrededor
     private static String fragmento(String texto, int pos, int largo) {
         int desde = Math.max(0, pos - 15);
         int hasta = Math.min(texto.length(), pos + largo + 15);

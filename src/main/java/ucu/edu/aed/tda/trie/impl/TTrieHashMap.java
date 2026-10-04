@@ -3,10 +3,11 @@ package ucu.edu.aed.tda.trie.impl;
 import ucu.edu.aed.tda.trie.Entry;
 import ucu.edu.aed.tda.trie.TTrie;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class TTrieHashMap<T> implements TTrie<T> {
+public class TTrieHashMap<T> implements TTrie<T>, Serializable {
 
     private final TNodoTrieHashMap<T> raiz;
 
