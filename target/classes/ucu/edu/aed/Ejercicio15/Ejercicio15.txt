@@ -1,0 +1,23 @@
+== EJERCICIO 15 ==
+
+1. El ISBN es un identificador único y estándar de cada edición de un libro,
+por lo que dos libros con el mismo ISBN representan el mismo libro.
+El título no sirve, porque libros distintos pueden llamarse igual.
+El autor no sirve, porque escribe muchos libros.
+El año no sirve, porque muchos libros se publican el mismo año.
+
+3. Si equals compara por isbn pero hashCode se calcula con titulo,
+se rompe el contrato de Java: dos objetos iguales según equals deben tener el mismo hashCode.
+El identificador que se elige debe funcionar para ambos para no romper este contrato.
+
+Por ejemplo, dos libros con el mismo ISBN pero con el título escrito distinto
+("Ficciones" y "FICCIONES") son iguales para equals, pero tienen hashes distintos.
+
+5. Con equals y hashCode bien implementados (ambos basados en el isbn),
+el HashSet debe tratar a los dos objetos como el mismo libro y guardar uno solo:
+
+-Al agregar l1, el HashSet calcula l1.hashCode() y lo guarda en el balde correspondiente.
+-Al agregar l2, calcula l2.hashCode(). Como tiene el mismo isbn, el hash es igual y cae en el mismo balde.
+-Dentro del balde llama a l1.equals(l2), que da true, así que detecta el duplicado y no inserta l2 (add devuelve false).
+
+Resultado: libros.size() es 1, y libros.contains(l2) es true. Es lo que imprime EjemploHasheoLibros.
