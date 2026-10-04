@@ -39,6 +39,6 @@ Resultado:
 3. GRAFICO
 ------------------------------------------------------------
 
-El programa muestra el gráfico de barras en la consola y además lo guarda como imagen en grafico-top10.png (en esta misma carpeta).
+El programa muestra el gráfico de barras en la consola. El mismo gráfico está como imagen en grafico-top10.png (en esta misma carpeta).
 
 Se observa que las palabras más frecuentes son artículos, conjunciones y preposiciones (la, el, y, en, que, de), que aparecen en cualquier texto en español. Las primeras palabras propias del libro son "tomás" y "niña", los personajes principales del cuento.
