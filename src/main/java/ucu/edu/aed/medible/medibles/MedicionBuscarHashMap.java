@@ -2,17 +2,17 @@ package ucu.edu.aed.medible.medibles;
 
 import ucu.edu.aed.medible.lib.Medible;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mide cuánto tarda el HashMap en buscar una lista de palabras.
  */
 public class MedicionBuscarHashMap extends Medible<List<String>> {
 
-    private final HashMap<String, String> map;
+    private final Map<String, String> map;
 
-    public MedicionBuscarHashMap(HashMap<String, String> map) {
+    public MedicionBuscarHashMap(Map<String, String> map) {
         this.map = map;
     }
 

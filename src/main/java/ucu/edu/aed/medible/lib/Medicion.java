@@ -44,8 +44,9 @@ public class Medicion {
     }
 
 
+    // separado con ';' porque los números salen con coma decimal (ej. "937,26 kB")
     public String toCSV() {
-        return String.format("%s,%s,%s", texto, Formatter.formatMemory(memoria), Formatter.formatNanos(tiempoEjecucion, 2));
+        return String.format("%s;%s;%s", texto, Formatter.formatMemory(memoria), Formatter.formatNanos(tiempoEjecucion, 2));
     }
 
     public void print() {

@@ -1,18 +1,18 @@
 package ucu.edu.aed.medible.medibles;
 
 import ucu.edu.aed.medible.lib.Medible;
-import ucu.edu.aed.tda.trie.impl.TTrieHashMap;
+import ucu.edu.aed.tda.trie.TTrie;
 
 import java.util.List;
 
 /**
- * Mide cuánto tarda el trie en buscar una lista de palabras.
+ * Mide cuánto tarda un trie (Trie o TTrieHashMap) en buscar una lista de palabras.
  */
-public class MedicionBuscarTTrieHashMap extends Medible<List<String>> {
+public class MedicionBuscarTrie extends Medible<List<String>> {
 
-    private final TTrieHashMap<String> trie;
+    private final TTrie<String> trie;
 
-    public MedicionBuscarTTrieHashMap(TTrieHashMap<String> trie) {
+    public MedicionBuscarTrie(TTrie<String> trie) {
         this.trie = trie;
     }
 

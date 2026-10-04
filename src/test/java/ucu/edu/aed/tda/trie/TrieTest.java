@@ -1,19 +1,18 @@
 package ucu.edu.aed.tda.trie;
 
 import junit.framework.TestCase;
-import ucu.edu.aed.tda.trie.impl.TTrieHashMap;
+import ucu.edu.aed.tda.trie.impl.Trie;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-public class TTrieHashMapTest extends TestCase {
+public class TrieTest extends TestCase {
 
-    private TTrieHashMap<Integer> trie;
+    private Trie<Integer> trie;
 
     protected void setUp() {
-        trie = new TTrieHashMap<>();
+        trie = new Trie<>();
         trie.insertar("sol", 42);
         trie.insertar("so", 7);
         trie.insertar("sal", 99);
@@ -22,7 +21,7 @@ public class TTrieHashMapTest extends TestCase {
     }
 
     public void testTrieNuevoEstaVacio() {
-        TTrieHashMap<Integer> vacio = new TTrieHashMap<>();
+        Trie<Integer> vacio = new Trie<>();
         assertNull(vacio.buscar("a"));
         assertTrue(vacio.predecir("").isEmpty());
     }
@@ -58,10 +57,12 @@ public class TTrieHashMapTest extends TestCase {
         assertTrue(trie.buscar("mal").esPalabra());
     }
 
-    public void testPredecir() {
+    // con el arreglo las palabras ya salen en orden alfabético, no hace falta ordenarlas
+    public void testPredecirEnOrdenAlfabetico() {
         assertEquals(Arrays.asList("sal", "so", "sol"), palabras(trie.predecir("s")));
         assertEquals(Arrays.asList("ma", "mal"), palabras(trie.predecir("m")));
         assertEquals(Arrays.asList("sol"), palabras(trie.predecir("sol")));
+        assertEquals(Arrays.asList("ma", "mal", "sal", "so", "sol"), palabras(trie.predecir("")));
     }
 
     public void testPredecirPrefijoQueNoExiste() {
@@ -69,25 +70,20 @@ public class TTrieHashMapTest extends TestCase {
         assertTrue(trie.predecir("solcito").isEmpty());
     }
 
-    public void testPredecirVacioDevuelveTodas() {
-        assertEquals(Arrays.asList("ma", "mal", "sal", "so", "sol"), palabras(trie.predecir("")));
-    }
-
     public void testRecorrer() {
         List<String> recorridas = new ArrayList<>();
         trie.recorrer(e -> recorridas.add(e.getPalabra()));
-        Collections.sort(recorridas);
         assertEquals(Arrays.asList("ma", "mal", "sal", "so", "sol"), recorridas);
     }
 
-    // con el HashMap sirve cualquier carácter, no solo a..z
-    public void testOtrosCaracteres() {
-        assertTrue(trie.insertar("ñandú", 10));
-        assertTrue(trie.insertar("año", 11));
-        assertTrue(trie.insertar("C3PO", 12));
-        assertEquals(Integer.valueOf(10), trie.buscar("ñandú").getDato());
-        assertEquals(Integer.valueOf(12), trie.buscar("C3PO").getDato());
-        assertEquals(Arrays.asList("ñandú"), palabras(trie.predecir("ñ")));
+    // el arreglo solo tiene lugar para la a..z
+    public void testCaracteresFueraDeLaAZNoSeInsertan() {
+        assertFalse(trie.insertar("ñandú", 10));
+        assertFalse(trie.insertar("Sol", 11));
+        assertFalse(trie.insertar("so2", 12));
+        assertNull(trie.buscar("ñandú"));
+        assertNull(trie.buscar("Sol"));
+        assertEquals(Arrays.asList("so", "sol"), palabras(trie.predecir("so"))); // no quedó nada a medias
     }
 
     private static List<String> palabras(List<Entry<Integer>> entries) {
@@ -95,7 +91,6 @@ public class TTrieHashMapTest extends TestCase {
         for (Entry<Integer> e : entries) {
             res.add(e.getPalabra());
         }
-        Collections.sort(res);
         return res;
     }
 }

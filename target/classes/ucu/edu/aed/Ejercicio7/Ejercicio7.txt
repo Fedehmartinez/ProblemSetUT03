@@ -1,75 +1,92 @@
 ------------------------------------------------------------
-EJERCICIO 7 - MEDICION DE ESTRUCTURAS DE DATOS
+EJERCICIO 7 - MEDICIÓN DE ESTRUCTURAS DE DATOS
 ------------------------------------------------------------
 
-Programa: Ejercicio7.java (se ejecuta desde la raiz del proyecto).
+Programa: ucu.edu.aed.medible.Main (la plantilla de medición, completada).
+Al terminar escribe los resultados en salida.csv, separados con ';'.
 
 Datos:
-    - listado-general-desordenado.txt : 80.382 lineas (79.355 palabras unicas)
+    - listado-general-desordenado.txt : 80.382 líneas (79.355 palabras distintas)
     - listado-general-palabrasBuscar.txt : 500 palabras a buscar
 
-Los tiempos son el promedio de 3 ejecuciones del programa.
+Los tiempos son la mediana de 5 ejecuciones del programa (la mediana no se
+ve afectada si en una corrida la computadora estaba ocupada con otra cosa).
 La memoria la calcula ObjectSizeFetcher, que serializa la estructura y
-mide el tamanio en bytes (1 MB = 1.000.000 bytes).
+mide su tamaño en bytes (1 MB = 1.000.000 bytes).
 
 
 ------------------------------------------------------------
-PARTE 2 y 3 - BUSQUEDA
+PARTE 1 - USO DE LAS CLASES DE MEDICIÓN
+------------------------------------------------------------
+
+Cada medición es una clase que extiende Medible<Data> e implementa:
+    - ejecutar(repeticiones, data): la operación que se quiere medir.
+    - getObjetoAMedirMemoria(): la estructura a la que se le mide la memoria.
+medir(repeticiones, data) toma el tiempo de ejecutar() y devuelve una
+Medicion con el tiempo y la memoria.
+
+
+------------------------------------------------------------
+PARTE 2 y 3 - BÚSQUEDA
 ------------------------------------------------------------
 
 Se cargan las palabras en cada estructura y se buscan las 500 palabras
-de listado-general-palabrasBuscar.txt, repitiendo las busquedas 20 veces
-(20 x 500 = 10.000 busquedas por estructura).
+de listado-general-palabrasBuscar.txt, repitiendo las búsquedas 20 veces
+(20 x 500 = 10.000 búsquedas por estructura).
 
-Clases de medicion:
-    - MedicionBuscarLinkedList   (list.contains)
-    - MedicionBuscarArrayList    (list.contains)
-    - MedicionBuscarHashMap      (map.containsKey)
-    - MedicionBuscarTreeMap      (map.containsKey)
-    - MedicionBuscarTTrieHashMap (trie.buscar)
+Estructuras y clases de medición:
+    - java.util.LinkedList -> MedicionBuscarLinkedList (contains)
+    - java.util.ArrayList  -> MedicionBuscarArrayList  (contains)
+    - TTrie (Trie)         -> MedicionBuscarTrie       (buscar)
+    - java.util.HashMap    -> MedicionBuscarHashMap    (containsKey)
+    - java.util.TreeMap    -> MedicionBuscarTreeMap    (containsKey)
+
+El TTrie usado es Trie (tda/trie/impl), que guarda los hijos de cada nodo
+en un arreglo de 26 posiciones, una por letra.
 
 
 ------------------------------------------------------------
-PARTE 4 - TABLA DE RESULTADOS (BUSQUEDA)
+PARTE 4 - TABLA DE RESULTADOS (BÚSQUEDA)
 ------------------------------------------------------------
 
 | Estructura   | Memoria (MB) | Tiempo (ms) | Orden de buscar |
 |--------------|--------------|-------------|-----------------|
-| LinkedList   |     0,94     |   1063,25   | O(n)            |
-| ArrayList    |     0,94     |    931,92   | O(n)            |
-| HashMap      |     1,33     |      1,55   | O(1) promedio   |
-| TreeMap      |     1,33     |      4,21   | O(log n)        |
-| TTrie        |    10,30     |      7,99   | O(L)            |
+| LinkedList   |     0,94     |   1320,00   | O(n)            |
+| ArrayList    |     0,94     |    848,09   | O(n)            |
+| Trie         |    11,55     |      4,37   | O(L)            |
+| HashMap      |     1,33     |      1,65   | O(1) promedio   |
+| TreeMap      |     1,33     |      4,65   | O(log n)        |
 
 n = cantidad de palabras cargadas, L = largo de la palabra buscada.
 
-Detalle de las 3 ejecuciones (ms):
+Detalle de las 5 ejecuciones (ms):
 
-| Estructura   | Corrida 1 | Corrida 2 | Corrida 3 |
-|--------------|-----------|-----------|-----------|
-| LinkedList   |   989,75  |  1020,00  |  1180,00  |
-| ArrayList    |   904,82  |   892,91  |   998,02  |
-| HashMap      |     1,17  |     1,60  |     1,88  |
-| TreeMap      |     3,87  |     4,02  |     4,74  |
-| TTrie        |     8,00  |     9,04  |     6,93  |
+| Estructura   |  1      |  2      |  3      |  4      |  5      |
+|--------------|---------|---------|---------|---------|---------|
+| LinkedList   | 1310,00 | 1320,00 | 2690,00 | 1180,00 | 1570,00 |
+| ArrayList    |  826,93 |  823,21 |  855,85 |  863,89 |  848,09 |
+| Trie         |    3,94 |    5,93 |    4,37 |    3,89 |    5,71 |
+| HashMap      |    1,65 |    1,29 |    1,98 |    1,36 |    1,95 |
+| TreeMap      |    4,65 |    4,05 |    5,51 |    4,16 |    4,82 |
 
-Analisis:
-    - LinkedList y ArrayList son, por lejos, las mas lentas: contains()
-      recorre la lista elemento por elemento, O(n). Son mas de 100 veces
-      mas lentas que el resto. ArrayList es algo mas rapida porque sus
-      elementos estan contiguos en memoria y recorrerla es mas barato que
-      seguir los enlaces de la LinkedList.
-    - HashMap es la mas rapida: calcula el hash de la palabra y va directo
-      a la posicion, O(1) en promedio.
-    - TreeMap es un arbol rojo-negro: cada busqueda hace unas log2(79.355)
-      ~ 17 comparaciones de strings, O(log n).
-    - TTrie baja un nivel por cada letra de la palabra, O(L), sin importar
-      cuantas palabras haya cargadas. En la practica es mas lento que
-      HashMap porque en cada nivel hace una busqueda en el HashMap de hijos
-      del nodo.
-    - En memoria el trie es el que mas consume (unas 8 veces mas que
-      HashMap): cada letra es un nodo con su propio HashMap de hijos.
-      Las listas son las que menos ocupan, porque solo guardan las palabras.
+Análisis:
+    - LinkedList y ArrayList son, por lejos, las más lentas: contains()
+      recorre la lista elemento por elemento, O(n). Son cientos de veces
+      más lentas que el resto. ArrayList es más rápida porque sus elementos
+      están contiguos en memoria y recorrerla es más barato que seguir los
+      enlaces de la LinkedList.
+    - HashMap es la más rápida: calcula el hash de la palabra y va directo
+      a la posición, O(1) en promedio.
+    - El Trie baja un nivel por cada letra de la palabra, O(L), sin
+      importar cuántas palabras haya cargadas. En cada nivel va directo al
+      hijo con la posición letra - 'a' del arreglo.
+    - TreeMap es un árbol rojo-negro: cada búsqueda hace unas
+      log2(79.355) ~ 17 comparaciones de strings, O(log n). Queda parecido
+      al Trie.
+    - En memoria el Trie es el que más consume (unas 9 veces más que
+      HashMap): cada letra es un nodo con su propio arreglo de 26 hijos,
+      aunque la mayoría estén vacíos. Las listas son las que menos ocupan,
+      porque solo guardan las palabras.
 
 
 ------------------------------------------------------------
@@ -77,41 +94,41 @@ PARTE 5 - PREDECIR / AUTOCOMPLETAR CON PREFIJO "cas"
 ------------------------------------------------------------
 
 Se buscan todas las palabras que comienzan con "cas" (259 palabras),
-repitiendo la operacion 20 veces.
+repitiendo la operación 20 veces.
 
-Clases de medicion:
-    - MedicionPredecirLinkedList   (recorre toda la lista con startsWith)
-    - MedicionPredecirHashMap      (recorre todas las claves con startsWith)
-    - MedicionPredecirTTrieHashMap (trie.predecir)
+Clases de medición:
+    - MedicionPredecirLinkedList (recorre toda la lista con startsWith)
+    - MedicionPredecirTrie       (trie.predecir)
+    - MedicionPredecirHashMap    (recorre todas las claves con startsWith)
 
 En las tres se guardan las palabras encontradas en una lista, para que
 hagan el mismo trabajo.
 
 | Estructura   | Memoria (MB) | Tiempo (ms) | Orden de predecir |
 |--------------|--------------|-------------|-------------------|
-| LinkedList   |     0,94     |     22,16   | O(n)              |
-| HashMap      |     1,33     |     48,12   | O(n)              |
-| TTrie        |    10,30     |     10,01   | O(L + k)          |
+| LinkedList   |     0,94     |     24,94   | O(n)              |
+| Trie         |    11,55     |      2,88   | O(L + k)          |
+| HashMap      |     1,33     |     80,37   | O(n)              |
 
-L = largo del prefijo, k = tamanio del subarbol bajo el prefijo.
+L = largo del prefijo, k = tamaño del subárbol bajo el prefijo.
 
-Detalle de las 3 ejecuciones (ms):
+Detalle de las 5 ejecuciones (ms):
 
-| Estructura   | Corrida 1 | Corrida 2 | Corrida 3 |
-|--------------|-----------|-----------|-----------|
-| LinkedList   |    20,15  |    21,64  |    24,68  |
-| HashMap      |    42,30  |    50,56  |    51,50  |
-| TTrie        |     7,24  |    15,67  |     7,13  |
+| Estructura   |  1      |  2      |  3      |  4      |  5      |
+|--------------|---------|---------|---------|---------|---------|
+| LinkedList   |   20,15 |   24,94 |   31,01 |   20,97 |   25,01 |
+| Trie         |    3,06 |    2,64 |    2,42 |    2,88 |    3,35 |
+| HashMap      |   71,76 |   98,46 |  113,62 |   80,29 |   80,37 |
 
-Analisis:
-    - El trie es el mas rapido para predecir: baja 3 niveles hasta el nodo
-      de "cas" y solo recorre ese subarbol, sin mirar el resto de las
+Análisis:
+    - El Trie es el más rápido para predecir: baja 3 niveles hasta el nodo
+      de "cas" y solo recorre ese subárbol, sin mirar el resto de las
       79.355 palabras.
     - LinkedList y HashMap tienen que revisar todas las palabras con
       startsWith, O(n). HashMap no sirve para buscar por prefijo, porque el
-      hash de "cas" no tiene relacion con el de "casa" o "cascada".
-    - HashMap es incluso mas lento que LinkedList porque al recorrerlo
+      hash de "cas" no tiene relación con el de "casa" o "cascada".
+    - HashMap es incluso más lento que LinkedList porque al recorrerlo
       tiene que pasar por todos los buckets de la tabla (incluidos los
-      vacios).
-    - Conclusion: para buscar palabras exactas conviene HashMap. Para
-      autocompletar conviene el trie, a cambio de usar mas memoria.
+      vacíos).
+    - Conclusión: para buscar palabras exactas conviene HashMap. Para
+      autocompletar conviene el Trie, a cambio de usar más memoria.

@@ -2,18 +2,18 @@ package ucu.edu.aed.medible.medibles;
 
 import ucu.edu.aed.medible.lib.Medible;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mide cuánto tarda el HashMap en encontrar las palabras que empiezan con un prefijo.
  */
 public class MedicionPredecirHashMap extends Medible<String> {
 
-    private final HashMap<String, String> map;
+    private final Map<String, String> map;
 
-    public MedicionPredecirHashMap(HashMap<String, String> map) {
+    public MedicionPredecirHashMap(Map<String, String> map) {
         this.map = map;
     }
 

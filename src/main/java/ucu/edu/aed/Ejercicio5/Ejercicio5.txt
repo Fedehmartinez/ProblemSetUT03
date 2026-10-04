@@ -1,17 +1,42 @@
+EJERCICIO 5 - Operaciones del Trie y NodoTrie
+
+Estructura:
+- TTrie tiene una raiz: un TNodoTrie que representa la palabra vacía. Nunca es nula.
+- Cada TNodoTrie tiene:
+    - hijos: para cada letra, el nodo hijo que le corresponde. El nodo no guarda
+      su letra, la letra es la clave con la que el padre llega al hijo.
+    - esPalabra: VERDADERO si en ese nodo termina una palabra.
+    - dato: el dato de la palabra que termina ahí (nulo si no termina ninguna).
+
+Precondición común a todas las operaciones: el trie está creado y la palabra
+(o el prefijo) no es nula y solo tiene letras del alfabeto del trie.
+
+En los órdenes, n es el largo de la palabra (o del prefijo). Obtener, agregar
+y quitar un hijo son O(1).
+
+
 ------------------------------------------------------------
 1. BUSCAR PALABRA COMPLETA
 ------------------------------------------------------------
+
+Lenguaje natural:
+Desde la raíz se baja por el hijo de cada letra de la palabra. Si falta algún
+hijo, la palabra no está. Si se llega al final, se devuelve un Entry con el
+dato del nodo y si es palabra o no: el camino puede existir sin ser una
+palabra, por ejemplo "sa" cuando solo se insertó "sal".
+
+Precondiciones: la común.
+
+Postcondiciones:
+- El trie no cambia.
+- Si no existe el camino de la palabra, devuelve nulo.
+- Si existe, devuelve un Entry con la palabra, el dato y esPalabra.
 
 Pseudocódigo:
 
 TTrie.buscar(palabra) devuelve Entry
 Comienzo
-    devolver raiz.buscar(palabra)
-Fin
-
-TNodoTrie.buscar(palabra) devuelve Entry
-Comienzo
-    nodo <- buscarNodo(palabra)
+    nodo <- raiz.buscarNodo(palabra)
     SI nodo = nulo ENTONCES
         devolver nulo
     FIN SI
@@ -20,33 +45,46 @@ Fin
 
 TNodoTrie.buscarNodo(palabra) devuelve TNodoTrie
 Comienzo
-    SI palabra es vacía ENTONCES
-        devolver this
-    FIN SI
-    letra <- primer carácter de palabra
-    hijo <- hijos.obtener(letra)
-    SI hijo = nulo ENTONCES
-        devolver nulo
-    FIN SI
-    devolver hijo.buscarNodo(palabra sin su primer carácter)
+    nodo <- this
+    PARA CADA letra EN palabra HACER
+        nodo <- nodo.hijos.obtener(letra)
+        SI nodo = nulo ENTONCES
+            devolver nulo        // se cortó el camino
+        FIN SI
+    FIN PARA
+    devolver nodo
 Fin
+
+Orden del tiempo de ejecución:
+El PARA da una vuelta por letra y cada vuelta es O(1). Crear el Entry también
+es O(1). Total: O(n). No depende de cuántas palabras tenga el trie.
 
 
 ------------------------------------------------------------
 2. OBTENER LA LISTA DE PALABRAS POR UN PREFIJO (PREDECIR)
 ------------------------------------------------------------
 
+Lenguaje natural:
+Se llega al nodo del prefijo igual que en buscar. Si no existe, se devuelve
+una lista vacía. Si existe, se recorre todo lo que cuelga de ese nodo armando
+la palabra (a lo que ya se tiene se le pega la letra del hijo al que se baja),
+y cada nodo que es fin de palabra se agrega a la lista.
+
+Precondiciones: la común (el prefijo puede ser vacío).
+
+Postcondiciones:
+- El trie no cambia.
+- Devuelve un Entry por cada palabra que empieza con el prefijo (si el prefijo
+  también es palabra, se incluye).
+- Si ninguna empieza con el prefijo, devuelve una lista vacía.
+- Si el prefijo es vacío, devuelve todas las palabras.
+
 Pseudocódigo:
 
 TTrie.predecir(prefijo) devuelve Lista de Entry
 Comienzo
-    devolver raiz.predecir(prefijo)
-Fin
-
-TNodoTrie.predecir(prefijo) devuelve Lista de Entry
-Comienzo
     resultado <- nueva Lista vacía
-    nodo <- buscarNodo(prefijo)
+    nodo <- raiz.buscarNodo(prefijo)
     SI nodo <> nulo ENTONCES
         nodo.recolectar(prefijo, resultado)
     FIN SI
@@ -58,62 +96,98 @@ Comienzo
     SI esPalabra ENTONCES
         resultado.agregar(nuevo Entry(dato, VERDADERO, palabraArmada))
     FIN SI
-    letras <- hijos.claves()
-    i <- 0
-    MIENTRAS i < letras.tamaño() HACER
-        letra <- letras[i]
-        hijo <- hijos.obtener(letra)
+    PARA CADA (letra, hijo) EN hijos HACER
         hijo.recolectar(palabraArmada + letra, resultado)
-        i <- i + 1
-    FIN MIENTRAS
+    FIN PARA
 Fin
+
+Orden del tiempo de ejecución:
+Sea m la cantidad de nodos que cuelgan del nodo del prefijo.
+Llegar al prefijo es O(n), igual que en buscar. recolectar visita cada uno de
+los m nodos una sola vez. Total: O(n + m). Las palabras que no empiezan con el
+prefijo nunca se miran. El peor caso es el prefijo vacío, que recorre todo
+el trie.
+(Siendo estrictos, palabraArmada + letra copia el string, así que cada nodo
+cuesta además el largo de la palabra que se está armando.)
 
 
 ------------------------------------------------------------
 3. INSERTAR UNA PALABRA CON UN DATO ASOCIADO
 ------------------------------------------------------------
 
+Lenguaje natural:
+Desde la raíz se baja por el hijo de cada letra, y si el hijo no existe se
+crea. Así las palabras que empiezan igual comparten nodos. Al terminar las
+letras, si el nodo ya era palabra no se hace nada. Si no, se marca como
+palabra y se le guarda el dato.
+
+Precondiciones: la común, y la palabra no es vacía.
+
+Postcondiciones:
+- Si la palabra no estaba: queda insertada con su dato, solo se crean los
+  nodos que faltaban y devuelve VERDADERO.
+- Si ya estaba: el trie no cambia (queda el dato que tenía) y devuelve FALSO.
+- Las demás palabras no cambian.
+
 Pseudocódigo:
 
-TTrie.insertar(palabra, dato) devuelve booleano
+TTrie.insertar(palabra, unDato) devuelve booleano
 Comienzo
-    devolver raiz.insertar(palabra, dato)
+    nodo <- raiz
+    PARA CADA letra EN palabra HACER
+        hijo <- nodo.hijos.obtener(letra)
+        SI hijo = nulo ENTONCES          // si no existe el camino, se crea
+            hijo <- nuevo TNodoTrie()
+            nodo.hijos.agregar(letra, hijo)
+        FIN SI
+        nodo <- hijo
+    FIN PARA
+    SI nodo.esPalabra ENTONCES
+        devolver FALSO                   // ya estaba
+    FIN SI
+    nodo.esPalabra <- VERDADERO
+    nodo.dato <- unDato
+    devolver VERDADERO
 Fin
 
-TNodoTrie.insertar(palabra, unDato) devuelve booleano
-Comienzo
-    SI palabra es vacía ENTONCES
-        SI esPalabra ENTONCES
-            devolver FALSO
-        FIN SI
-        esPalabra <- VERDADERO
-        dato <- unDato
-        devolver VERDADERO
-    FIN SI
-    letra <- primer carácter de palabra
-    hijo <- hijos.obtener(letra)
-    SI hijo = nulo ENTONCES
-        hijo <- nuevo TNodoTrie()
-        hijos.agregar(letra, hijo)
-    FIN SI
-    devolver hijo.insertar(palabra sin su primer carácter, unDato)
-Fin
+Orden del tiempo de ejecución:
+Una vuelta por letra, y cada vuelta es O(1) aunque haya que crear el nodo.
+Total: O(n). En el peor caso se crean n nodos nuevos, pero eso es memoria;
+el tiempo sigue siendo O(n).
 
 
 ------------------------------------------------------------
 4. ELIMINAR UNA PALABRA DEL TRIE
 ------------------------------------------------------------
 
-Pseudocódigo:
+Lenguaje natural:
+Se baja siguiendo las letras de la palabra. Si falta un hijo o el nodo final
+no es palabra, la palabra no está y no se toca nada. Si está, se desmarca el
+nodo final y se le saca el dato. A la vuelta de la recursión se borran los
+nodos que quedaron sin uso (no son palabra y no tienen hijos), de abajo hacia
+arriba, hasta llegar a uno que todavía se usa. La raíz nunca se borra.
+Ejemplo: con "so" y "sol", borrar "sol" saca el nodo de la "l" pero deja el de
+la "o", porque es la palabra "so". Borrar "so" solo desmarca la "o", porque el
+nodo sigue haciendo falta para "sol".
+
+Precondiciones: la común.
+
+Postcondiciones:
+- Si la palabra estaba: deja de estar, se borran los nodos que solo eran de
+  ella y devuelve VERDADERO.
+- Si no estaba: el trie no cambia y devuelve FALSO.
+- Las demás palabras y sus datos no cambian.
+
+Pseudocódigo (i es la posición de la letra que toca; se empieza con 0):
 
 TTrie.eliminar(palabra) devuelve booleano
 Comienzo
-    devolver raiz.eliminar(palabra)
+    devolver raiz.eliminar(palabra, 0)
 Fin
 
-TNodoTrie.eliminar(palabra) devuelve booleano
+TNodoTrie.eliminar(palabra, i) devuelve booleano
 Comienzo
-    SI palabra es vacía ENTONCES
+    SI i = largo(palabra) ENTONCES       // llegué al nodo final
         SI NOT esPalabra ENTONCES
             devolver FALSO
         FIN SI
@@ -121,19 +195,20 @@ Comienzo
         dato <- nulo
         devolver VERDADERO
     FIN SI
-    letra <- primer carácter de palabra
+    letra <- palabra[i]
     hijo <- hijos.obtener(letra)
     SI hijo = nulo ENTONCES
         devolver FALSO
     FIN SI
-    eliminada <- hijo.eliminar(palabra sin su primer carácter)
-    SI eliminada AND hijo.esInutil() ENTONCES
-        hijos.quitar(letra)
+    eliminada <- hijo.eliminar(palabra, i + 1)
+    SI eliminada AND NOT hijo.esPalabra AND hijo.hijos.esVacio() ENTONCES
+        hijos.quitar(letra)              // el hijo quedó sin uso
     FIN SI
     devolver eliminada
 Fin
 
-TNodoTrie.esInutil() devuelve booleano
-Comienzo
-    devolver (NOT esPalabra) AND hijos.esVacio()
-Fin
+Orden del tiempo de ejecución:
+Se baja una vez por letra y a la vuelta cada nivel hace O(1) (fijarse si el
+hijo quedó sin uso y capaz quitarlo). Total: O(n).
+Se pasa la posición i en vez de cortar la palabra porque cortar un string lo
+copia, y hacerlo en cada nivel volvería la operación O(n²).

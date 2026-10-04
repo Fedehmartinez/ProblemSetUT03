@@ -1,8 +1,7 @@
 package ucu.edu.aed.Ejercicio11;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,11 +16,11 @@ public class FrecuenciaPalabras {
 
     private static final String ARCHIVO_LIBRO = "src/main/resources/ut03/libro.txt";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws FileNotFoundException {
 
         HashMap<String, Integer> frecuencias = new HashMap<>(); // palabra -> cantidad de veces
 
-        Scanner archivo = new Scanner(new File(ARCHIVO_LIBRO), StandardCharsets.UTF_8);
+        Scanner archivo = new Scanner(new File(ARCHIVO_LIBRO), "UTF-8");
 
         while (archivo.hasNext()) {
 
@@ -71,10 +70,11 @@ public class FrecuenciaPalabras {
         int maximo = top.get(0).getValue();
         System.out.println("\nGráfico:");
         for (Map.Entry<String, Integer> entrada : top) {
-            System.out.printf("%-8s | %s %d%n",
-                    entrada.getKey(),
-                    "#".repeat(entrada.getValue() * 50 / maximo),
-                    entrada.getValue());
+            String barra = "";
+            for (int i = 0; i < entrada.getValue() * 50 / maximo; i++) {
+                barra += "#";
+            }
+            System.out.printf("%-8s | %s %d%n", entrada.getKey(), barra, entrada.getValue());
         }
     }
 }

@@ -1,16 +1,16 @@
 package ucu.edu.aed.medible.medibles;
 
 import ucu.edu.aed.medible.lib.Medible;
-import ucu.edu.aed.tda.trie.impl.TTrieHashMap;
+import ucu.edu.aed.tda.trie.TTrie;
 
 /**
- * Mide cuánto tarda el trie en encontrar las palabras que empiezan con un prefijo.
+ * Mide cuánto tarda un trie (Trie o TTrieHashMap) en encontrar las palabras que empiezan con un prefijo.
  */
-public class MedicionPredecirTTrieHashMap extends Medible<String> {
+public class MedicionPredecirTrie extends Medible<String> {
 
-    private final TTrieHashMap<String> trie;
+    private final TTrie<String> trie;
 
-    public MedicionPredecirTTrieHashMap(TTrieHashMap<String> trie) {
+    public MedicionPredecirTrie(TTrie<String> trie) {
         this.trie = trie;
     }
 

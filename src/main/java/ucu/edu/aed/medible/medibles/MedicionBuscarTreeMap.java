@@ -3,16 +3,16 @@ package ucu.edu.aed.medible.medibles;
 import ucu.edu.aed.medible.lib.Medible;
 
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
 
 /**
  * Mide cuánto tarda el TreeMap en buscar una lista de palabras.
  */
 public class MedicionBuscarTreeMap extends Medible<List<String>> {
 
-    private final TreeMap<String, String> map;
+    private final Map<String, String> map;
 
-    public MedicionBuscarTreeMap(TreeMap<String, String> map) {
+    public MedicionBuscarTreeMap(Map<String, String> map) {
         this.map = map;
     }
 
