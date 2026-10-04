@@ -1,0 +1,4 @@
+La clase más apropiada para esta aplicación es HashMap.
+HashMap permite almacenar una relación entre una palabra y la cantidad de veces que aparece. La palabra se utiliza como clave y la frecuencia como valor. Por ejemplo, si la palabra “casa” aparece 15 veces, se almacena como casa → 15.
+Es apropiado ya que permite buscar una palabra y actualizar su frecuencia de manera eficiente, con un costo promedio O(1) para insertar y buscar elementos.
+Por lo tanto, se utilizaría HashMap<String, Integer> para almacenar las palabras y sus respectivas frecuencias.
