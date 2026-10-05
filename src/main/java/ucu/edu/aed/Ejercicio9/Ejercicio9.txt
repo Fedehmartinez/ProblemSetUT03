@@ -1,0 +1,98 @@
+EJERCICIO 9 - Rendimiento de la tabla hash según el factor de carga
+
+Programa: Ejercicio9.java (usa TablaHashLineal.java, la tabla hash con
+sondeo lineal del ejercicio 6). Al ejecutarlo imprime la tabla de abajo.
+Gráfica: Grafica_Comparaciones.png (en esta misma carpeta).
+
+
+------------------------------------------------------------
+CONDICIONES DE LA MEDICIÓN
+------------------------------------------------------------
+
+- Tabla de M = 100.003 posiciones (número primo).
+- Función hash: h(clave) = clave mod M.
+- Colisiones: sondeo lineal, h(i) = (h(0) + i) mod M.
+- Claves enteras aleatorias y distintas. Se usa una semilla fija, así que
+  cada vez que se ejecuta da los mismos resultados.
+- Cada posición de la tabla que se inspecciona cuenta como una comparación.
+- Inserción: promedio de las claves insertadas desde el factor de carga
+  anterior hasta el indicado (en el 70 %, desde la tabla vacía).
+- Búsqueda exitosa: se buscan todas las claves insertadas hasta ese factor.
+- Búsqueda sin éxito: se buscan 20.000 claves que nunca se insertaron.
+
+
+------------------------------------------------------------
+TABLA DE RESULTADOS
+------------------------------------------------------------
+
+Factor    Prom. comp.   Prom. comp.        Prom. comp.
+de carga  inserción     búsqueda exitosa   búsqueda sin éxito
+70 %          2,19          2,19                6,12
+75 %          7,09          2,51                8,64
+80 %         10,65          3,02               13,30
+85 %         16,93          3,84               23,69
+90 %         35,58          5,60               56,05
+91 %         56,93          6,17               67,52
+92 %         66,41          6,82               83,96
+93 %         92,49          7,74              120,16
+94 %        135,64          9,10              165,11
+95 %        188,44         10,99              212,49
+96 %        241,90         13,40              320,99
+97 %        411,99         17,51              568,71
+98 %        824,34         25,74             1168,45
+99 %       1820,48         43,87             3199,53
+
+
+------------------------------------------------------------
+VALORES TEÓRICOS
+------------------------------------------------------------
+
+Para comparar se usan las fórmulas de Knuth para el sondeo lineal, con
+α = factor de carga:
+    Búsqueda exitosa:    1/2 x (1 + 1 / (1 - α))
+    Búsqueda sin éxito:  1/2 x (1 + 1 / (1 - α)²)
+
+Factor    Exitosa    Exitosa     Sin éxito   Sin éxito
+de carga  medida     teórica     medida      teórica
+70 %        2,19       2,17         6,12        6,06
+75 %        2,51       2,50         8,64        8,50
+80 %        3,02       3,00        13,30       13,00
+85 %        3,84       3,83        23,69       22,72
+90 %        5,60       5,50        56,05       50,50
+91 %        6,17       6,06        67,52       62,23
+92 %        6,82       6,75        83,96       78,63
+93 %        7,74       7,64       120,16      102,55
+94 %        9,10       8,83       165,11      139,40
+95 %       10,99      10,50       212,49      200,51
+96 %       13,40      13,00       320,99      313,02
+97 %       17,51      17,17       568,71      556,09
+98 %       25,74      25,50      1168,45     1250,58
+99 %       43,87      50,50      3199,53     5000,80
+
+
+------------------------------------------------------------
+¿SE CONDICEN CON LA TEORÍA?
+------------------------------------------------------------
+
+Sí. Los resultados coinciden con lo visto para el sondeo lineal: el costo
+crece despacio hasta cerca del 80 % de carga y se dispara a partir del 90 %.
+
+- La búsqueda exitosa pasa de 2,19 comparaciones (70 %) a 43,87 (99 %), y la
+  sin éxito de 6,12 a 3199,53. Hasta el 97 % los valores medidos quedan muy
+  cerca de las fórmulas, que tienden a infinito cuando α se acerca a 1.
+- La inserción y la búsqueda sin éxito empeoran mucho más que la exitosa.
+  Las dos tienen que recorrer todo el bloque de posiciones ocupadas seguidas
+  (agrupamiento primario) hasta encontrar una libre, mientras que la
+  exitosa se detiene al llegar a su clave.
+- La inserción queda entre la búsqueda sin éxito del factor anterior y la del
+  factor actual. Tiene sentido, porque insertar es lo mismo que hacer una
+  búsqueda sin éxito hasta encontrar una posición libre.
+- En el 98 % y el 99 % los valores medidos quedan por debajo de la fórmula
+  (por ejemplo, 3199,53 contra 5000,80 en la búsqueda sin éxito). Con la
+  tabla casi llena los resultados varían mucho de una corrida a otra, porque
+  dependen de cómo quedaron armados los bloques de posiciones ocupadas, y
+  esto es una sola corrida. Además la fórmula es una aproximación.
+
+Conclusión: con sondeo lineal conviene mantener el factor de carga por debajo
+del 70-80 % y agrandar la tabla antes de llegar al 90 %, o usar otra forma de
+resolver colisiones, como el encadenamiento.
