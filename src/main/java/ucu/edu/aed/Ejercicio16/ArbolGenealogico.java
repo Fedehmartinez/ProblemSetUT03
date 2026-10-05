@@ -1,63 +1,87 @@
 package ucu.edu.aed.Ejercicio16;
 
+import ucu.edu.aed.tda.generic_trie.TArbolGenerico;
+import ucu.edu.aed.tda.generic_trie.impl.ArbolGenerico;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Árbol genealógico construido desde un ancestro común (la raíz).
- */
 public class ArbolGenealogico {
-    private NodoPersona raiz;
+  private final TArbolGenerico<Persona> arbol;
+  private final Persona raiz;
 
-    public ArbolGenealogico(Persona ancestro) {
-        raiz = new NodoPersona(ancestro);
+  public ArbolGenealogico(Persona raiz) {
+    this.arbol = new ArbolGenerico<>(raiz);
+    this.raiz = raiz;
+  }
+
+  public boolean agregarHijo(Persona padre, Persona hijo) {
+    return arbol.agregarHijo(padre, hijo);
+  }
+
+  private List<Persona> camino(Persona persona) {
+    List<Persona> camino = new ArrayList<>();
+    Persona actual = arbol.buscar(persona);
+    while (actual != null) {
+      camino.add(actual);
+      actual = arbol.obtenerPadre(actual);
     }
+    return camino;
+  }
 
-    public NodoPersona getRaiz() {
-        return raiz;
+  private List<Persona> todas() {
+    List<Persona> todas = new ArrayList<>();
+    arbol.preOrden(todas::add);
+    return todas;
+  }
+
+  public boolean esDescendiente(Persona persona, Persona ancestro) {
+    List<Persona> camino = camino(persona);
+    for (int i = 1; i < camino.size(); i++) {
+      if (camino.get(i).compareTo(ancestro) == 0) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    // 1. Todos los descendientes de una persona
-    public List<Persona> descendientes(String nombre) {
-        List<Persona> lista = new ArrayList<>();
-        NodoPersona n = raiz.buscar(nombre);
-        if (n != null) {
-            n.descendientes(lista);
+  public List<Persona> listarDescendientes(Persona persona) {
+    List<Persona> descendientes = new ArrayList<>();
+    for (Persona p : todas()) {
+      if (esDescendiente(p, persona)) {
+        descendientes.add(p);
+      }
+    }
+    return descendientes;
+  }
+
+  public int altura() {
+    return arbol.altura(raiz);
+  }
+
+  public int contarPersonas() {
+    return todas().size();
+  }
+
+  public List<Persona> personasDeGeneracion(int generacion) {
+    List<Persona> resultado = new ArrayList<>();
+    for (Persona p : todas()) {
+      if (camino(p).size() - 1 == generacion) {
+        resultado.add(p);
+      }
+    }
+    return resultado;
+  }
+
+  public Persona ancestroComun(Persona a, Persona b) {
+    List<Persona> caminoB = camino(b);
+    for (Persona ancestro : camino(a)) {
+      for (Persona p : caminoB) {
+        if (ancestro.compareTo(p) == 0) {
+          return ancestro;
         }
-        return lista;
+      }
     }
-
-    // 2. Altura del árbol
-    public int altura() {
-        return raiz.altura();
-    }
-
-    // 3. Cantidad total de personas
-    public int cantidadPersonas() {
-        return raiz.contar();
-    }
-
-    // 4. Personas de una generación (0 = raíz)
-    public List<Persona> generacion(int g) {
-        List<Persona> lista = new ArrayList<>();
-        raiz.generacion(g, lista);
-        return lista;
-    }
-
-    // 5. Ancestro común más cercano (si alguna de las dos no existe devuelve null)
-    public Persona ancestroComun(String a, String b) {
-        if (raiz.buscar(a) == null || raiz.buscar(b) == null) {
-            return null;
-        }
-        return raiz.ancestroComun(a, b).getPersona();
-    }
-
-    // 6. Indica si desc es descendiente de anc
-    public boolean esDescendiente(String desc, String anc) {
-        NodoPersona a = raiz.buscar(anc);
-        if (a == null || anc.equals(desc)) {
-            return false;
-        }
-        return a.buscar(desc) != null;
-    }
+    return null;
+  }
 }

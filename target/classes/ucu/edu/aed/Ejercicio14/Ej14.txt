@@ -1,0 +1,45 @@
+Ejercicio 14:
+
+Claves (en este orden): 45, 12, 37, 82, 29, 54, 31, 76, 18, 93, 11, 68
+
+1. Tamaño elegido: 23, es el doble de grande que la cantidad de claves (α = 0,52) y es un número primo por lo que la distribución es mejor y la cantidad de colisiones disminuye para la función hash que se va a utilizar.
+
+2. Función hash: h(k) = k mod 23.
+
+3. Estado final de la tabla para cada estrategia:
+
+Sondeo Lineal: h(k, i) = (h(k) + i) mod M
+[0 -> 68, 1 -> 93, 2, 3, 4, 5, 6 -> 29, 7 -> 76, 8 -> 54, 9 -> 31, 10, 11 -> 11, 12 -> 12, 13 -> 82, 14 -> 37, 15, 16, 17, 18 -> 18, 19, 20, 21, 22 -> 45]
+
+Sondeo Cuadrático: h(k, i) = (h(k) + i²) mod M
+[0 -> 68, 1 -> 93, 2, 3, 4, 5, 6 -> 29, 7 -> 76, 8 -> 54, 9 -> 31, 10, 11 -> 11, 12 -> 12, 13 -> 82, 14 -> 37, 15, 16, 17, 18 -> 18, 19, 20, 21, 22 -> 45]
+
+Encadenamiento Separado (las claves que chocan quedan en una lista en la misma posición):
+[0, 1 -> 93, 2, 3, 4, 5, 6 -> 29, 7 -> 76, 8 -> 54 -> 31, 9, 10, 11 -> 11, 12 -> 12, 13 -> 82, 14 -> 37, 15, 16, 17, 18 -> 18, 19, 20, 21, 22 -> 45 -> 68]
+
+4. Cantidad total de colisiones:
+Hay 2 colisiones en las tres estrategias: la clave 31 choca con el 54 en la posición 8, y la clave 68 choca con el 45 en la posición 22.
+- Sondeo lineal: 31 va a la posición 9 (+1) y 68 va a la 0 (+1, porque 22 + 1 = 23 mod 23 = 0).
+- Sondeo cuadrático: con i = 1 se avanza 1² = 1, así que quedan en las mismas posiciones que en el lineal.
+- Encadenamiento: 31 queda detrás del 54 y 68 detrás del 45.
+
+5. Promedio de comparaciones en búsquedas exitosas:
+Las claves sin colisión se encuentran con 1 comparación, y 31 y 68 con 2 (14 en total).
+- Sondeo lineal: 14/12 = 1,17
+- Sondeo cuadrático: 14/12 = 1,17
+- Encadenamiento separado: 14/12 = 1,17
+
+6. Promedio de comparaciones en búsquedas sin éxito:
+Claves usadas: 46, 100, 104, 33 y 67 (ninguna está en la tabla). Se eligieron para que caigan en zonas distintas de la tabla.
+En sondeo lineal y cuadrático se cuentan las posiciones que se miran hasta llegar a una vacía (contando la vacía). En encadenamiento se cuentan los nodos de la lista, y una lista vacía cuenta 0.
+
+Clave (h(k))   Lineal   Cuadrático   Encadenamiento
+46 (0)         3        3            0
+100 (8)        3        4            2
+104 (12)       4        3            1
+33 (10)        1        1            0
+67 (21)        1        1            0
+Promedio       2,4      2,4          0,6
+
+7. Comparación y conclusión:
+Con este set de datos y α ≈ 0,52 todas funcionan bien y empatan en exitosas (1,17). En las no exitosas el encadenamiento separado gana (0,6), y el sondeo lineal y el cuadrático empatan (2,4).
