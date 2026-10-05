@@ -1,0 +1,23 @@
+Ejercicio 14: 
+Tamaño elegido: 23, es el doble de grande que la cantidad de claves (α = 0,52) y es un número primo por lo que la distribución es mejor y la cantidad de colisiones disminuye para la función hash que se va a utilizar. 
+Función hash: h(k) = k mod 23.
+
+1.	Sondeo Lineal: h(k, i) = (h(k) + i) mod M
+[0 -> 68, 1 -> 93, 2, 3, 4, 5, 6 -> 29, 7 -> 76, 8 -> 54, 9 -> 31, 10, 11 -> 11, 12 -> 12, 13 -> 82, 14 -> 37, 15, 16, 17, 18 -> 18, 19, 20, 21, 22 -> 45]
+
+Cantidad de colisiones: 2 (54 y 31 en la clave 8, 45 y 68 en la clave 22)
+Promedio comparaciones exitosas: 14/12 = 1,17
+
+2.	Sondeo Cuadrático: h(k, i) = (h(k) + i2)
+[0 -> 68, 1 -> 93, 2, 3, 4, 5, 6 -> 29, 7 -> 76, 8 -> 54, 9 -> 31, 10, 11 -> 11, 12 -> 12, 13 -> 82, 14 -> 37, 15, 16, 17, 18 -> 18, 19, 20, 21, 22 -> 45]
+
+Cantidad de colisiones: 2 (54 y 31 en la clave 8, 45 y 68 en la clave 22)
+Promedio comparaciones exitosas: 14/12 = 1,17
+
+3.	Encadenamiento Separado: 
+[0 -> 68, 1 -> 93, 2, 3, 4, 5, 6 -> 29, 7 -> 76, 8 -> 54, 9 -> 31, 10, 11 -> 11, 12 -> 12, 13 -> 82, 14 -> 37, 15, 16, 17, 18 -> 18, 19, 20, 21, 22 -> 45]
+
+Cantidad de colisiones: 2 (54 y 31 en la clave 8, 45 y 68 en la clave 22)
+Promedio comparaciones exitosas: 14/12 = 1,17
+con este set de datos y α ≈ 0,52 todas funcionan bien y empatan en exitosas, el encadenamiento separado gana en no exitosas, seguido del cuadrático y por último el lineal.
+
